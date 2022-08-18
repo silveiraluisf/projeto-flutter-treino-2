@@ -19,7 +19,7 @@ class ByteBankApp extends StatelessWidget {
           ), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.blueAccent[700]),
           appBarTheme: AppBarTheme(color: Colors.green[900])
       ),
-      home: const ContactForm(),
+      home: const Dashboard(),
     );
   }
 }
