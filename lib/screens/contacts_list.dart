@@ -5,22 +5,18 @@ import 'package:flutter/material.dart';
 import '../models/contact.dart';
 
 class ContactsList extends StatelessWidget {
-
   final List<Contact> contacts = [];
 
   @override
   Widget build(BuildContext context) {
-    contacts.add(Contact(0, 'Lolo', 2000));
-    contacts.add(Contact(0, 'Lolo', 2000));
-    contacts.add(Contact(0, 'Lolo', 2000));
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Contacts'),
-        ),
-        body: FutureBuilder<List<Contact>>(
+      appBar: AppBar(
+        title: const Text('Contacts'),
+      ),
+      body: FutureBuilder<List<Contact>>(
         future: findAll(),
         builder: (context, snapshot) {
-          switch(snapshot.connectionState) {
+          switch (snapshot.connectionState) {
             case ConnectionState.none:
               break;
             case ConnectionState.waiting:
@@ -34,52 +30,53 @@ class ContactsList extends StatelessWidget {
                   ],
                 ),
               );
-              case ConnectionState.active:
-                break;
-              case ConnectionState.done:
-                final List<Contact>? contacts = snapshot.data;
-                return ListView.builder(
-                  itemBuilder: (context, index) {
-                    final Contact contact = contacts![index];
-                    return _ContactItem(contact);
-                  },
+            case ConnectionState.active:
+              break;
+            case ConnectionState.done:
+              final List<Contact>? contacts = snapshot.data;
+              return ListView.builder(
+                itemBuilder: (context, index) {
+                  final Contact contact = contacts![index];
+                  return _ContactItem(contact);
+                },
                 itemCount: contacts?.length,
-                );
+              );
           }
           return const Text('Unknown error');
         },
-        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const ContactForm(),
-            ),
-          ).then((newContact) => debugPrint(newContact.toString()));
+            MaterialPageRoute(builder: (context) => const ContactForm()),
+          );
         },
-        child: const Icon(Icons.add),
+        child: const Icon(
+          Icons.add,
+        ),
       ),
     );
   }
-  }
+}
 
-  class _ContactItem extends StatelessWidget {
+class _ContactItem extends StatelessWidget {
+  final Contact contact;
 
-    final Contact contact;
-    const _ContactItem(this.contact);
-    @override
-    Widget build(BuildContext context) {
-      return Card(
-        child: ListTile(
-          title: Text(
-            contact.name,
-            style: const TextStyle(fontSize: 20.0),
-          ),
-          subtitle: Text(
-            contact.accountNumber.toString(),
-            style: const TextStyle(fontSize: 16.0),
-          ),
+  const _ContactItem(this.contact);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(
+          contact.name,
+          style: const TextStyle(fontSize: 20.0),
         ),
-      );
-    }
+        subtitle: Text(
+          contact.accountNumber.toString(),
+          style: const TextStyle(fontSize: 16.0),
+        ),
+      ),
+    );
   }
+}
