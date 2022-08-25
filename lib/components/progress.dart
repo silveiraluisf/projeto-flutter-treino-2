@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Progress extends StatelessWidget {
   final String message;
 
- Progress({this.message = 'Loading'});
+ const Progress({this.message = 'Loading'});
   @override
   Widget build(BuildContext context) {
     return Center(
