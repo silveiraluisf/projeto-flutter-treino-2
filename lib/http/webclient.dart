@@ -4,12 +4,15 @@ import 'package:http_interceptor/http_interceptor.dart';
 import '../models/contact.dart';
 import '../screens/transactions_list.dart';
 
+final Client client = InterceptedClient.build(
+  interceptors: [LoggingInterceptor()],
+);
+
+const String baseUrl = '192.168.200.162:8080';
+
 Future<List<Transaction>> findAll() async {
-  final Client client = InterceptedClient.build(
-    interceptors: [LoggingInterceptor()],
-  );
   final Response response =
-      await client.get(Uri.http('192.168.200.162:8080', 'transactions')).timeout(const Duration(seconds: 5));
+      await client.get(Uri.http(baseUrl, 'transactions')).timeout(const Duration(seconds: 5));
   final List<dynamic> decodedJson = jsonDecode(response.body);
   final List<Transaction> transactions = [];
   for (Map<String, dynamic> transactionJson in decodedJson) {
@@ -45,4 +48,8 @@ class LoggingInterceptor implements InterceptorContract {
     print('body: ${data.body}');
     return data;
   }
+}
+
+void save(Transaction transactions) {
+  client.post(Uri.http(baseUrl, 'transactions'));
 }
