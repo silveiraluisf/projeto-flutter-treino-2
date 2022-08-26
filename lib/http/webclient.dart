@@ -11,8 +11,9 @@ final Client client = InterceptedClient.build(
 const String baseUrl = '192.168.200.162:8080';
 
 Future<List<Transaction>> findAll() async {
-  final Response response =
-      await client.get(Uri.http(baseUrl, 'transactions')).timeout(const Duration(seconds: 5));
+  final Response response = await client
+      .get(Uri.http(baseUrl, 'transactions'))
+      .timeout(const Duration(seconds: 5));
   final List<dynamic> decodedJson = jsonDecode(response.body);
   final List<Transaction> transactions = [];
   for (Map<String, dynamic> transactionJson in decodedJson) {
@@ -50,6 +51,18 @@ class LoggingInterceptor implements InterceptorContract {
   }
 }
 
-void save(Transaction transactions) {
-  client.post(Uri.http(baseUrl, 'transactions'));
+void save(Transaction transaction) {
+  final Map<String, dynamic> transactionsMap = {
+    'value' : transaction.value,
+    'contact' : {
+      'name' : transaction.contact.name,
+      'accountNumber' : transaction.contact.accountNumber
+    }
+  };
+  final String transactionJson = jsonEncode(transactionsMap);
+  client.post(
+    Uri.http(baseUrl, 'transactions'),
+    headers: {'Content-type': 'application/json', 'password': '1000'},
+    body: transactionJson
+  );
 }
