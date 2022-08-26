@@ -51,18 +51,26 @@ class LoggingInterceptor implements InterceptorContract {
   }
 }
 
-void save(Transaction transaction) {
+Future<Transaction> save(Transaction transaction) async {
   final Map<String, dynamic> transactionsMap = {
-    'value' : transaction.value,
-    'contact' : {
-      'name' : transaction.contact.name,
-      'accountNumber' : transaction.contact.accountNumber
+    'value': transaction.value,
+    'contact': {
+      'name': transaction.contact.name,
+      'accountNumber': transaction.contact.accountNumber
     }
   };
   final String transactionJson = jsonEncode(transactionsMap);
-  client.post(
-    Uri.http(baseUrl, 'transactions'),
-    headers: {'Content-type': 'application/json', 'password': '1000'},
-    body: transactionJson
+  final Response response = await client.post(Uri.http(baseUrl, 'transactions'),
+      headers: {'Content-type': 'application/json', 'password': '1000'},
+      body: transactionJson);
+  Map<String, dynamic> json = jsonDecode(response.body);
+  final Map<String, dynamic> contactJson = json['contact'];
+  return Transaction(
+    json['value'],
+    Contact(
+      0,
+      contactJson['name'],
+      contactJson['accountNumber'],
+    ),
   );
 }
