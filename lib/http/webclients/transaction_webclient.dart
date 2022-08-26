@@ -9,6 +9,11 @@ class TransactionWebClient {
     final Response response = await client
         .get(Uri.http(baseUrl, 'transactions'))
         .timeout(const Duration(seconds: 5));
+    List<Transaction> transactions = _toTransactions(response);
+    return transactions;
+  }
+
+  List<Transaction> _toTransactions(Response response) {
     final List<dynamic> decodedJson = jsonDecode(response.body);
     final List<Transaction> transactions = [];
     for (Map<String, dynamic> transactionJson in decodedJson) {
@@ -27,13 +32,11 @@ class TransactionWebClient {
   }
 
   Future<Transaction> save(Transaction transaction) async {
-    final Map<String, dynamic> transactionsMap = {
-      'value': transaction.value,
-      'contact': {
-        'name': transaction.contact.name,
-        'accountNumber': transaction.contact.accountNumber
-      }
-    };
+    return await _toTransaction(transaction);
+  }
+
+  Future<Transaction> _toTransaction(Transaction transaction) async {
+    Map<String, dynamic> transactionsMap = _toMap(transaction);
     final String transactionJson = jsonEncode(transactionsMap);
     final Response response = await client.post(
         Uri.http(baseUrl, 'transactions'),
@@ -49,5 +52,16 @@ class TransactionWebClient {
         contactJson['accountNumber'],
       ),
     );
+  }
+
+  Map<String, dynamic> _toMap(Transaction transaction) {
+    final Map<String, dynamic> transactionsMap = {
+      'value': transaction.value,
+      'contact': {
+        'name': transaction.contact.name,
+        'accountNumber': transaction.contact.accountNumber
+      }
+    };
+    return transactionsMap;
   }
 }
