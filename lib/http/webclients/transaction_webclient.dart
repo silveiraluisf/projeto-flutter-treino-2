@@ -19,8 +19,7 @@ class TransactionWebClient {
 
     final Response response = await client.post(
         Uri.http(baseUrl, 'transactions'),
-        headers: {'Content-type': 'application/json', 'password': '1000'
-        },
+        headers: {'Content-type': 'application/json', 'password': '1000'},
         body: transactionJson);
 
     return Transaction.fromJson(jsonDecode(response.body));
