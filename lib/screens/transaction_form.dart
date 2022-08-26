@@ -1,7 +1,7 @@
 import 'package:bytebank/http/webclients/transaction_webclient.dart';
-import 'package:bytebank/screens/transactions_list.dart';
 import 'package:flutter/material.dart';
 import '../models/contact.dart';
+import '../models/transaction.dart';
 
 class TransactionForm extends StatefulWidget {
   final Contact contact;

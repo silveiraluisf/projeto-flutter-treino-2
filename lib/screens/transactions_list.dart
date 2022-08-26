@@ -2,7 +2,7 @@ import 'package:bytebank/components/centered_message.dart';
 import 'package:bytebank/http/webclients/transaction_webclient.dart';
 import 'package:flutter/material.dart';
 import '../components/progress.dart';
-import '../models/contact.dart';
+import '../models/transaction.dart';
 
 class TransactionsList extends StatelessWidget {
 
@@ -64,17 +64,4 @@ class TransactionsList extends StatelessWidget {
   }
 }
 
-class Transaction {
-  final double value;
-  final Contact contact;
 
-  Transaction(
-    this.value,
-    this.contact,
-  );
-
-  @override
-  String toString() {
-    return 'Transaction{value: $value, contact: $contact}';
-  }
-}
