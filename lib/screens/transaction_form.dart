@@ -1,3 +1,4 @@
+import 'package:bytebank/components/transaction_auth_dialog.dart';
 import 'package:bytebank/http/webclients/transaction_webclient.dart';
 import 'package:flutter/material.dart';
 import '../models/contact.dart';
@@ -6,7 +7,7 @@ import '../models/transaction.dart';
 class TransactionForm extends StatefulWidget {
   final Contact contact;
 
-  TransactionForm(this.contact);
+  const TransactionForm(this.contact, {Key? key}) : super(key: key);
 
   @override
   _TransactionFormState createState() => _TransactionFormState();
@@ -50,24 +51,36 @@ class _TransactionFormState extends State<TransactionForm> {
                   controller: _valueController,
                   style: const TextStyle(fontSize: 24.0),
                   decoration: const InputDecoration(labelText: 'Value'),
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: SizedBox(
-                  width: double.maxFinite,
-                  child: ElevatedButton(
-                    child: const Text('Transfer'), onPressed: () {
-                      final double? value = double.tryParse(_valueController.text);
-                      final transactionCreated = Transaction(value!, widget.contact);
-                      _webClient.save(transactionCreated).then((transaction) {
-                        Navigator.pop(context);
-                      });
-                  },
-                  ),
-                ),
-              )
+                    width: double.maxFinite,
+                    child: ElevatedButton(
+                        child: const Text('Transfer'),
+                        onPressed: () {
+                          final double? value =
+                              double.tryParse(_valueController.text);
+                          final transactionCreated =
+                              Transaction(value!, widget.contact);
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return TransactionAuthDialog(
+                                  onConfirm: (String password) {
+                                    _webClient
+                                        .save(transactionCreated, password)
+                                        .then((transaction) {
+                                      Navigator.pop(context);
+                                    });
+                                  },
+                                );
+                              });
+                        })),
+              ),
             ],
           ),
         ),

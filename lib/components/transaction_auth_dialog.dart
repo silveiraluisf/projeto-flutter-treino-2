@@ -1,30 +1,46 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class TransactionAuthDialog extends StatelessWidget {
-  const TransactionAuthDialog({Key? key}) : super(key: key);
+class TransactionAuthDialog extends StatefulWidget {
+ final Function(String password) onConfirm;
+
+ TransactionAuthDialog({
+   required this.onConfirm,
+ });
+
+  @override
+  _TransactionAuthDialogState createState() => _TransactionAuthDialogState();
+}
+
+class _TransactionAuthDialogState extends State<TransactionAuthDialog> {
+
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Authenticate'),
-      content: const TextField(
+      content: TextField(
+        controller: _passwordController,
         obscureText: true,
         maxLength: 4,
-        style: TextStyle(fontSize: 48, letterSpacing: 32),
+        decoration: const InputDecoration(
+          border: OutlineInputBorder()
+        ),
+        style: const TextStyle(fontSize: 48, letterSpacing: 32),
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
       ),
       actions: <Widget>[
         TextButton(
           onPressed: () {
-            print('cancel');
+            Navigator.pop(context);
           },
           child: const Text('Cancel'),
         ),
         TextButton(
           onPressed: () {
-            print('confirm');
+            widget.onConfirm(_passwordController.text);
+            Navigator.pop(context);
           },
           child: const Text('Confirm'),
         )

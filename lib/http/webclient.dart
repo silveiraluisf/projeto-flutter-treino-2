@@ -6,5 +6,5 @@ final Client client = InterceptedClient.build(
   interceptors: [LoggingInterceptor()],
 );
 
-const String baseUrl = '192.168.200.162:8080';
+const String baseUrl = '192.168.200.135:8080';
 
