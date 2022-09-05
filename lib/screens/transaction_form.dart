@@ -1,3 +1,4 @@
+import 'package:bytebank/components/response_dialog.dart';
 import 'package:bytebank/components/transaction_auth_dialog.dart';
 import 'package:bytebank/http/webclients/transaction_webclient.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class TransactionForm extends StatefulWidget {
 class _TransactionFormState extends State<TransactionForm> {
   final TextEditingController _valueController = TextEditingController();
   final TransactionWebClient _webClient = TransactionWebClient();
+
 
   @override
   Widget build(BuildContext context) {
@@ -56,27 +58,26 @@ class _TransactionFormState extends State<TransactionForm> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: SizedBox(
-                    width: double.maxFinite,
-                    child: ElevatedButton(
-                        child: const Text('Transfer'),
-                        onPressed: () {
-                          final double? value =
-                              double.tryParse(_valueController.text);
-                          final transactionCreated =
-                              Transaction(value!, widget.contact);
-                          showDialog(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: SizedBox(
+                      width: double.maxFinite,
+                      child: ElevatedButton(
+                          child: const Text('Transfer'),
+                          onPressed: () {
+                            final double? value =
+                                double.tryParse(_valueController.text);
+                            final transactionCreated =
+                                Transaction(value!, widget.contact);
+                            showDialog(
                               context: context,
                               builder: (contextDialog) {
                                 return TransactionAuthDialog(
-                                  onConfirm: (String password) {
-                                    _save(transactionCreated, password, context);
-                                    });
-                                  },
-                                );
-                              })
-                        )),
+                                    onConfirm: (String password) {
+                                  _save(transactionCreated, password, context);
+                                });
+                              },
+                            );
+                          }))),
             ],
           ),
         ),
@@ -84,13 +85,25 @@ class _TransactionFormState extends State<TransactionForm> {
     );
   }
 
-    void _save(
-      Transaction transactionCreated,
-      String password,
-      BuildContext context,
-    ) async {
-      _webClient.save(transactionCreated, password).then((transaction) {
-        Navigator.pop(context);
-    });
+  void _save(
+    Transaction transactionCreated,
+    String password,
+    BuildContext context,
+  ) async {
+    await _webClient.save(transactionCreated, password).catchError((e) {
+      showDialog(
+          context: context,
+          builder: (contextDialog) {
+            return FailureDialog(e.message);
+          });
+    }, test: (e) => e is Exception);
+
+    showDialog(
+        context: context,
+        builder: (contextDialog) {
+          return const SuccessDialog('successful transaction');
+        });
+    Navigator.pop(context);
+
   }
 }

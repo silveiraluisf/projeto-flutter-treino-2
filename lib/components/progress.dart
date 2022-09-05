@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Progress extends StatelessWidget {
   final String message;
 
- const Progress({this.message = 'Loading'});
+ const Progress({Key? key, this.message = 'Loading'}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Center(

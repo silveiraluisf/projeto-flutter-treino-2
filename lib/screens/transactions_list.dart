@@ -8,6 +8,8 @@ class TransactionsList extends StatelessWidget {
 
   final TransactionWebClient _webClient = TransactionWebClient();
 
+  TransactionsList({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

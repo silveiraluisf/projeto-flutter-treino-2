@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class TransactionAuthDialog extends StatefulWidget {
  final Function(String password) onConfirm;
 
- TransactionAuthDialog({
+ const TransactionAuthDialog({Key? key,
    required this.onConfirm,
- });
+ }) : super(key: key);
 
   @override
   _TransactionAuthDialogState createState() => _TransactionAuthDialogState();
