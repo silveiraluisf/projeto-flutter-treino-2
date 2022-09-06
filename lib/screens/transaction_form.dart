@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bytebank/components/response_dialog.dart';
 import 'package:bytebank/components/transaction_auth_dialog.dart';
 import 'package:bytebank/http/webclients/transaction_webclient.dart';
@@ -90,20 +92,45 @@ class _TransactionFormState extends State<TransactionForm> {
     String password,
     BuildContext context,
   ) async {
-    await _webClient.save(transactionCreated, password).catchError((e) {
-      showDialog(
-          context: context,
-          builder: (contextDialog) {
-            return FailureDialog(e.message);
-          });
-    }, test: (e) => e is Exception);
+    Transaction? transaction = await _send(
+      transactionCreated,
+      password,
+      context,
+    );
+    _showSuccessfulMessage(transaction!, context);
+  }
 
-    showDialog(
+  Future _showSuccessfulMessage(
+      Transaction transaction, BuildContext context) async {
+    await showDialog(
         context: context,
         builder: (contextDialog) {
           return const SuccessDialog('successful transaction');
         });
     Navigator.pop(context);
+  }
 
+  Future<Transaction?> _send(Transaction transactionCreated, String password,
+      BuildContext context) async {
+    final Transaction? transaction =
+    await _webClient.save(transactionCreated, password).catchError((e) {
+      _showFailureMessage(context, message: e.message);
+    }, test: (e) => e is HttpException).catchError((e) {
+      _showFailureMessage(context, message: 'timeout submitting the transaction');
+    }, test: (e) => e is TimeoutException).catchError((e) {
+      _showFailureMessage(context);
+    });
+    return transaction;
+  }
+
+  void _showFailureMessage(
+      BuildContext context, {
+        String message = 'Unknown error',
+      }) {
+    showDialog(
+        context: context,
+        builder: (contextDialog) {
+          return FailureDialog(message);
+        });
   }
 }
