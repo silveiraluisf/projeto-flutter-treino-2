@@ -13,7 +13,7 @@ class TransactionWebClient {
         .toList();
   }
 
-  Future<Transaction?> save(Transaction transaction, String password) async {
+  Future<Transaction> save(Transaction transaction, String password) async {
     final String transactionJson = jsonEncode(transaction.toJson());
 
     await Future.delayed(const Duration(seconds: 2));
